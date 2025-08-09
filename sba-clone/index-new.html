@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBA PPP Forgiveness - Login</title>
+    <!-- Firebase Configuration -->
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            width: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-left: -80px;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            color: #0066cc;
+            text-decoration: none;
+            background: white;
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .skip-link:focus {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+
+        /* Main Content Area */
+        .main-wrapper {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: scroll;
+        }
+
+        .content-section {
+            flex: 1;
+            padding: 40px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .registration-container {
+            background-color: white;
+            padding: 20px 28px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .registration-header {
+            text-align: left;
+            width: 100%;
+        }
+
+        .registration-body {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .registration-image {
+            flex-shrink: 0;
+            width: 330px;
+            display: flex;
+            align-items: flex-start;
+            margin-top: -40px;
+        }
+
+        .registration-image img {
+            width: 100%;
+            height: 15%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+
+        .registration-content {
+            flex: 1;
+        }
+
+        .welcome-text {
+            font-size: 20px;
+            margin-bottom: 4px;
+            color: #003366;
+            font-weight: normal;
+        }
+
+        .main-title {
+            font-size: 2.25rem;
+            color: #003366;
+            margin-bottom: 6px;
+            font-weight: bold;
+            line-height: 1.0;
+        }
+
+        .title-divider {
+            border: none;
+            height: 3px;
+            background-color: #dc3545;
+            width: 60px;
+            margin: 6px 0;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #0066cc;
+            margin: 5px 0 10px 0;
+            font-weight: 600;
+        }
+
+        .description {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .register-button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .register-button:hover {
+            background-color: #0056b3;
+        }
+
+        
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .login-title {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .login-subtitle {
+            margin-bottom: 20px;
+            color: #3b3b3b;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Email verification notification */
+        .email-notification {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #0c5460;
+            font-size: 14px;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .email-notification.show {
+            display: block;
+        }
+
+        .email-notification strong {
+            color: #0c5460;
+        }
+
+        .email-notification .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #0c5460;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 10px;
+        }
+
+        .email-notification .close-btn:hover {
+            color: #062c33;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .checkbox-group label {
+            color: #000000;
+            font-size: 14px;
+        }
+
+        .button-links-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .signin-button {
+            background-color: white;
+            color: #007bff;
+            padding: 10px 16px;
+            border: 1px solid #0369d6;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 30%;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .signin-button:hover {
+            background-color: #f8f9fa;
+            border-color: #0056b3;
+            color: #0056b3;
+        }
+
+        .forgot-links {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+            margin: 0;
+        }
+
+        .forgot-links a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-links a:hover {
+            text-decoration: underline;
+        }
+
+        .new-user {
+            text-align: left;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .new-user a {
+            color: #0369d6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .new-user a:hover {
+            text-decoration: underline;
+        }
+
+        
+        .resources-container {
+            background-color: white;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .resources-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #003366;
+            font-weight: bold;
+        }
+
+        .resources-container a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .resources-container a:hover {
+            text-decoration: underline;
+        }
+
+
+        .bottom-banner {
+            background-color: white;
+            color: #333;
+            padding: 20px 0;
+            margin-top: auto;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: -70px;
+        }
+
+        .footer-links a {
+            color: #0351a5;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: #0351a5;
+            font-size: 14px;
+            margin-right: -70px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .registration-container {
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .registration-body {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .registration-image {
+                width: 100%;
+                max-width: 385px;
+                margin: 0 auto;
+            }
+
+            .login-container,
+            .resources-container {
+                padding: 20px;
+            }
+
+            .footer-links a {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="container">
+                <div class="logo-container">
+                    <img src="logo.png" alt="SBA LOGO" />
+                </div>
+            </div>
+        </div>
+
+        <main id="main-content" class="content-section">
+            <div class="container">
+                <div class="content-grid">
+                    <div class="registration-container">
+                        <div class="registration-header">
+                            <p class="welcome-text">Welcome to the</p>
+                            <h1 class="main-title">SBA PPP Direct Forgiveness Portal</h1>
+                            <hr class="title-divider">
+                        </div>
+
+                        <div class="registration-body">
+                            <div class="registration-image">
+                                <img src="pic.jpeg"
+                                     alt="Welcome - Business owner holding open sign" />
+                            </div>
+
+                            
+                            <div class="registration-content">
+                                <h2 class="subtitle">Register and Apply for PPP Forgiveness</h2>
+
+                                <p class="description">
+                                    This portal is made available by the US Small Business Administration to streamline
+                                    forgiveness processing for PPP Borrowers. After registration, you may use this
+                                    streamlined process to automatically submit your forgiveness request to your lender.
+                                </p>
+
+                                <p class="description">
+                                    For assistance, please visit
+                                    <a href="https://caweb.sba.gov/cls/dsp_contactus.cfm" target="_blank" rel="noopener noreferrer">
+                                        caweb.sba.gov/cls/dsp_contactus.cfm
+                                    </a>.
+                                </p>
+
+                                <a href="signup.html" class="register-button">
+                                    Register to Start Your Request
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Login and Resources -->
+                    <div class="right-side">
+                        <!-- Login Container -->
+                        <div class="login-container">
+                            <h2 class="login-title">Registered User Login</h2>
+                            <p class="login-subtitle">If you already have Log-in credentials, you can login here.</p>
+
+                            <!-- Email Verification Notification -->
+                            <div id="emailNotification" class="email-notification">
+                                <button type="button" class="close-btn" onclick="closeNotification()">&times;</button>
+                                <strong>Account Created Successfully!</strong><br>
+                                Please check your email (<span id="userEmailSpan"></span>) and click the verification link to complete your registration. After verification, you can sign in below.
+                            </div>
+
+                            <form onsubmit="handleSubmit(event)">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" id="username" name="username" placeholder="Username" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" id="password" name="password" placeholder="Password" required>
+                                </div>
+                                
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="remember" name="remember">
+                                    <label for="remember">Remember Me</label>
+                                </div>
+
+                                <div class="button-links-container">
+                                    <button type="submit" class="signin-button">Sign In</button>
+                                    <div class="forgot-links">
+                                        <a href="/accounts/password/reset/">Forgot Password?</a>
+                                        <a href="/users/~forgot/username/">Forgot Username?</a>
+                                    </div>
+                                </div>
+
+                            </form>
+                            
+                            <div class="new-user">
+                                New User? <strong><a href="signup.html">Register to Start Your Request</a></strong>
+                            </div>
+                        </div>
+
+                        <!-- Resources Container -->
+                        <div class="resources-container">
+                            <h3 class="resources-title">Resources</h3>
+                            <p>
+                                <a href="https://sba-forgiveness-docs.s3-us-gov-west-1.amazonaws.com/SBA-PPP-DF-User-Guide.pdf" target="_blank" rel="noopener noreferrer">
+                                    PPP Direct Forgiveness Platform User Guide
+                                </a>
+                            </p>
+                            <p style="margin-top: 10px;">
+                                <em>
+                                    <a href="https://dfussbaforgiveness.zendesk.com/hc/en-us/articles/4405857645083-Direct-Forgiveness-User-Guide-in-Additional-Languages" target="_blank" rel="noopener noreferrer">
+                                        User Guide in Other Languages
+                                    </a>
+                                </em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Banner -->
+        <footer class="bottom-banner">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <a href="https://connect.sba.gov/Home/Accessibility" target="_blank" rel="noopener noreferrer">Accessibility</a>
+                        <a href="https://www.sba.gov/document/policy-guidance--privacy-impact-assessments" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                        <a href="/terms-and-conditions">Terms of Service</a>
+                        <a href="tel:877-552-2692">Customer Service: 877-552-2692</a>
+                    </div>
+                    <div class="copyright">
+                        <strong>Copyright ©2021 Small Business Administration.</strong> All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Wait for Firebase to be initialized
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait a bit for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Check if user is already logged in
+            firebase.onAuthStateChanged(firebase.auth, (user) => {
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                }
+            });
+
+            // Check if we should show email verification notification
+            const showEmailVerification = sessionStorage.getItem('showEmailVerification');
+            const userEmail = sessionStorage.getItem('userEmail');
+
+            if (showEmailVerification === 'true' && userEmail) {
+                showEmailNotification(userEmail);
+                // Clear the flags so notification doesn't show again
+                sessionStorage.removeItem('showEmailVerification');
+                sessionStorage.removeItem('userEmail');
+            }
+        });
+
+        function showEmailNotification(email) {
+            const notification = document.getElementById('emailNotification');
+            const emailSpan = document.getElementById('userEmailSpan');
+
+            if (notification && emailSpan) {
+                emailSpan.textContent = email;
+                notification.classList.add('show');
+            }
+        }
+
+        function closeNotification() {
+            const notification = document.getElementById('emailNotification');
+            if (notification) {
+                notification.classList.remove('show');
+            }
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const username = formData.get('username');
+            const password = formData.get('password');
+            const remember = formData.get('remember');
+
+            if (!username || !password) {
+                alert('Please enter both username and password.');
+                return;
+            }
+
+            try {
+                // Show loading state
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Signing in...';
+                submitBtn.disabled = true;
+
+                // Firebase only supports email authentication, so username must be email
+                if (!username.includes('@')) {
+                    throw new Error('Please use your email address to sign in.');
+                }
+
+                // Sign in with Firebase
+                const { user, error } = await firebaseHelpers.signIn(username, password);
+
+                if (error) {
+                    throw error;
+                }
+
+                if (user) {
+                    // Store user info for dashboard
+                    sessionStorage.setItem('userName', user.displayName || user.email);
+                    sessionStorage.setItem('userEmail', user.email);
+
+                    alert('Login successful!\n\nWelcome to the SBA PPP Direct Forgiveness Portal.');
+                    window.location.href = 'dashboard.html';
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'Login failed. ';
+
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage += 'No account found with this email address.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage += 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage += 'This account has been disabled.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage += 'Too many failed login attempts. Please try again later.';
+                } else {
+                    errorMessage += error.message;
+                }
+
+                alert(errorMessage);
+            } finally {
+                // Reset button state
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Check for signup success redirect
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const signupSuccess = urlParams.get('signup');
+            const email = urlParams.get('email');
+
+            if (signupSuccess === 'success' && email) {
+                // Show the email notification
+                const notification = document.getElementById('emailNotification');
+                const emailSpan = document.getElementById('userEmailSpan');
+
+                if (notification && emailSpan) {
+                    emailSpan.textContent = email;
+                    notification.classList.add('show');
+                }
+
+                // Clean up the URL
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        });
+    </script>
+</body>
+</html>

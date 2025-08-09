@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBA Admin Login - PPP Forgiveness Portal</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase Configuration -->
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            width: 200px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-left: -80px;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Main Content Area */
+        .main-wrapper {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: scroll;
+        }
+
+        .content-section {
+            flex: 1;
+            padding: 40px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: start;
+            justify-items: center;
+        }
+
+        .admin-login-container {
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+            border-top: 4px solid #dc3545;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-icon {
+            font-size: 48px;
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+
+        .admin-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .admin-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+        }
+
+        .admin-signin-button {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .admin-signin-button:hover {
+            background-color: #c82333;
+        }
+
+        .admin-signin-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bottom Banner */
+        .bottom-banner {
+            background-color: white;
+            color: #333;
+            padding: 20px 0;
+            margin-top: auto;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: -70px;
+        }
+
+        .footer-links a {
+            color: #0351a5;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: #0351a5;
+            font-size: 14px;
+            margin-right: -70px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-login-container {
+                padding: 30px 20px;
+                margin: 0 10px;
+            }
+
+            .admin-title {
+                font-size: 1.5rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .footer-links {
+                margin-left: 0;
+            }
+
+            .copyright {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="container">
+                <div class="logo-container">
+                    <img src="logo.png" alt="SBA LOGO" />
+                </div>
+            </div>
+        </div>
+
+        <main class="content-section">
+            <div class="container">
+                <div class="content-grid">
+                    <div class="admin-login-container">
+                        <div class="admin-header">
+                            <div class="admin-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h1 class="admin-title">Admin Login</h1>
+                            <p class="admin-subtitle">
+                                Secure access to the SBA PPP Forgiveness Administration Portal
+                            </p>
+                        </div>
+
+                        <div id="errorMessage" class="error-message"></div>
+
+                        <form id="adminLoginForm" onsubmit="handleAdminLogin(event); return false;">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" placeholder="Enter your admin email" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            </div>
+
+                            <button type="submit" class="admin-signin-button">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Sign In to Admin Dashboard
+                            </button>
+                        </form>
+
+                        <div class="back-link">
+                            <a href="index-new.html">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to User Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Banner -->
+        <footer class="bottom-banner">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <a href="https://connect.sba.gov/Home/Accessibility" target="_blank" rel="noopener noreferrer">Accessibility</a>
+                        <a href="https://www.sba.gov/document/policy-guidance--privacy-impact-assessments" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                        <a href="/terms-and-conditions">Terms of Service</a>
+                        <a href="tel:877-552-2692">Customer Service: 877-552-2692</a>
+                    </div>
+                    <div class="copyright">
+                        <strong>Copyright ©2021 Small Business Administration.</strong> All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Wait for Firebase to be initialized
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait a bit for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Check if user is already logged in and is admin
+            firebase.onAuthStateChanged(firebase.auth, async (user) => {
+                if (user) {
+                    // Check if user has admin access
+                    const hasAdminAccess = await checkAdminAccess(user);
+                    if (hasAdminAccess) {
+                        window.location.href = 'admin-dashboard.html';
+                    }
+                }
+            });
+        });
+
+        async function checkAdminAccess(user) {
+            try {
+                // Only allow specific admin user ID
+                const allowedAdminUID = '2ufzyJ2SB0dmhBlAcQ3fkVXQq6z2';
+
+                if (user.uid !== allowedAdminUID) {
+                    return false;
+                }
+
+                // Optional: Also check Firestore profile for additional validation
+                const { data: profile, error } = await firebaseHelpers.getUserProfile(user.uid);
+
+                // If profile doesn't exist, still allow access for the specific UID
+                if (error && error.message.includes('not found')) {
+                    return true;
+                }
+
+                if (error) {
+                    console.error('Error fetching user profile:', error);
+                    return true; // Still allow access for the specific UID even if profile check fails
+                }
+
+                // If profile exists, check role as additional validation
+                return !profile || profile.role === 'admin' || profile.role === 'user';
+            } catch (error) {
+                console.error('Error checking admin access:', error);
+                // Still allow access for the specific UID even if there's an error
+                return user.uid === '2ufzyJ2SB0dmhBlAcQ3fkVXQq6z2';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            hideError();
+
+            const formData = new FormData(event.target);
+            const email = formData.get('email').trim();
+            const password = formData.get('password');
+
+            if (!email || !password) {
+                showError('Please enter both email and password.');
+                return;
+            }
+
+            try {
+                // Show loading state
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                const originalHTML = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+                submitBtn.disabled = true;
+
+                // Sign in with Firebase
+                const { user, error } = await firebaseHelpers.signIn(email, password);
+
+                if (error) {
+                    throw error;
+                }
+
+                if (user) {
+                    // Check if user has admin privileges
+                    const hasAdminAccess = await checkAdminAccess(user);
+
+                    if (!hasAdminAccess) {
+                        // Sign out the user since they don't have admin access
+                        await firebaseHelpers.signOut();
+                        throw new Error('Access denied. Admin privileges required to access this portal.');
+                    }
+
+                    // Store admin info for dashboard
+                    sessionStorage.setItem('adminName', user.displayName || user.email);
+                    sessionStorage.setItem('adminEmail', user.email);
+
+                    // Redirect to admin dashboard
+                    window.location.href = 'admin-dashboard.html';
+                }
+
+            } catch (error) {
+                console.error('Admin login error:', error);
+                let errorMessage = 'Login failed. ';
+
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage += 'No account found with this email address.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage += 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage += 'Invalid email address format.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage += 'This account has been disabled.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage += 'Too many failed login attempts. Please try again later.';
+                } else if (error.message.includes('Admin privileges required')) {
+                    errorMessage += 'Access denied. This portal is restricted to authorized administrators only.';
+                } else {
+                    errorMessage += error.message;
+                }
+
+                showError(errorMessage);
+            } finally {
+                // Reset button state
+                const submitBtn = event.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Admin Dashboard';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Make function available globally
+        window.handleAdminLogin = handleAdminLogin;
+    </script>
+</body>
+</html>

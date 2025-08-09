@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Sample PPP Loans</title>
+    <script type="module" src="firebase-config.js"></script>
+</head>
+<body>
+    <h1>Add Sample PPP Loans</h1>
+    <button id="addSampleLoans">Add Sample Loans</button>
+    <div id="status"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            document.getElementById('addSampleLoans').addEventListener('click', addSampleLoans);
+        });
+
+        async function addSampleLoans() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = 'Adding sample loans...';
+
+            const sampleLoans = [
+                {
+                    loan_number: 'PPP001234567',
+                    loan_amount: 50000,
+                    processing_fee: 2500,
+                    status: 'active',
+                    lender_name: 'First National Bank',
+                    loan_date: '2020-04-15'
+                },
+                {
+                    loan_number: 'PPP002345678',
+                    loan_amount: 75000,
+                    processing_fee: 3750,
+                    status: 'active',
+                    lender_name: 'Community Credit Union',
+                    loan_date: '2020-04-20'
+                },
+                {
+                    loan_number: 'PPP003456789',
+                    loan_amount: 25000,
+                    processing_fee: 1250,
+                    status: 'active',
+                    lender_name: 'Regional Bank',
+                    loan_date: '2020-05-01'
+                },
+                {
+                    loan_number: 'PPP004567890',
+                    loan_amount: 100000,
+                    processing_fee: 5000,
+                    status: 'active',
+                    lender_name: 'Business Bank',
+                    loan_date: '2020-05-10'
+                },
+                {
+                    loan_number: 'PPP005678901',
+                    loan_amount: 35000,
+                    processing_fee: 1750,
+                    status: 'active',
+                    lender_name: 'Local Credit Union',
+                    loan_date: '2020-05-15'
+                }
+            ];
+
+            try {
+                for (const loan of sampleLoans) {
+                    const { data, error } = await firebaseHelpers.createLoan(loan);
+                    if (error) {
+                        console.error('Error adding loan:', error);
+                        statusDiv.innerHTML += `<br>Error adding loan ${loan.loan_number}: ${error.message}`;
+                    } else {
+                        statusDiv.innerHTML += `<br>Added loan: ${loan.loan_number} - $${loan.loan_amount.toLocaleString()}`;
+                    }
+                }
+                statusDiv.innerHTML += '<br><strong>Sample loans added successfully!</strong>';
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.innerHTML += `<br>Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

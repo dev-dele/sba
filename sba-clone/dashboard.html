@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBA PPP Forgiveness - Dashboard</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase Configuration -->
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Section */
+        .header-section {
+            background-color: white;
+            padding: 12px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .sba-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .sba-logo img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            text-decoration: underline;
+        }
+
+        .start-request-btn {
+            background-color: #0351a5;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .start-request-btn:hover {
+            background-color: #138496;
+        }
+
+        .refresh-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .refresh-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-icon {
+            color: #0066cc;
+            font-size: 18px;
+        }
+
+        .sign-out-btn {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sign-out-btn:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .left-sidebar {
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .main-panel {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .time-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .clock-icon {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .clock-icon::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border: 2px solid #666;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .notice-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .important-section {
+            margin-bottom: 20px;
+        }
+
+        .important-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .important-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .requirements-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .requirements-list li {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            padding-left: 8px;
+            position: relative;
+        }
+
+        .requirements-list li::before {
+            content: '•';
+            color: #333;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Main Panel Content */
+        .panel-header {
+            border-bottom: 3px solid #dc3545;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .requests-table th {
+            background-color: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        .requests-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-submitted {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-draft {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-approved {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-pending {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+
+        .amount-cell {
+            font-weight: 600;
+            color: #0351a5;
+        }
+
+        .fee-cell {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .lender-cell {
+            font-size: 13px;
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #0351a5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0351a5;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #0351a5;
+            padding: 10px 20px;
+            border: 2px solid #0351a5;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Help Button */
+        .help-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+            z-index: 1000;
+        }
+
+        .help-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Bottom Banner */
+        .bottom-banner {
+            background-color: white;
+            color: #333;
+            padding: 20px 0;
+            margin-top: auto;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: -70px;
+        }
+
+        .footer-links a {
+            color: #0351a5;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: #0351a5;
+            font-size: 14px;
+            margin-right: -70px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .left-sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .logo-container {
+                margin-left: 0;
+            }
+
+            .action-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .footer-links {
+                margin-left: 0;
+            }
+
+            .copyright {
+                margin-right: 0;
+            }
+
+            /* Make table responsive */
+            .requests-table {
+                font-size: 12px;
+            }
+
+            .requests-table th,
+            .requests-table td {
+                padding: 8px 4px;
+            }
+
+            .status-badge {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .requests-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header-section">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="sba-logo">
+                        <img src="logo.png" alt="SBA Logo" />
+                    </div>
+                    <div class="nav-items">
+                        <a href="forgiveness-form.html" class="start-request-btn">
+                            <i class="fas fa-plus"></i>
+                            Start New Forgiveness Request
+                        </a>
+                        <button onclick="refreshRequests()" class="nav-item refresh-btn" id="headerRefreshBtn" style="display: none;">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh Requests
+                        </button>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <i class="fas fa-question-circle user-icon"></i>
+                    <i class="fas fa-user user-icon"></i>
+                    <a href="#" class="sign-out-btn" onclick="handleSignOut()">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Left Sidebar -->
+        <div class="left-sidebar">
+            <!-- Time Notice -->
+            <div class="time-notice">
+                <div class="clock-icon"></div>
+                <div class="notice-text">
+                    <strong>Your request can be finalized in 30 minutes or less.</strong>
+                </div>
+            </div>
+
+            <!-- Important Section -->
+            <div class="important-section">
+                <div class="important-title">Important:</div>
+                <div class="important-text">
+                    Before you begin, please ensure you will be the authorized signer on this Forgiveness request and have the authority to act on behalf of the PPP Borrower.
+                </div>
+            </div>
+
+            <!-- Requirements Section -->
+            <div class="requirements-title">To complete this request you will need:</div>
+            <ul class="requirements-list">
+                <li>Your TIN (Tax Identification Number (SSN or EIN or ITIN)) that was used to apply for the PPP loan; and either</li>
+                <li>Your PPP Loan Number that was originally assigned by the SBA. This should have been provided by your lender when you originally received the PPP proceeds; or</li>
+                <li>Your PPP Loan Amount that was originally received from the SBA.</li>
+            </ul>
+        </div>
+
+        <!-- Main Panel -->
+        <div class="main-panel">
+            <div class="panel-header">
+                <h1 class="panel-title">SBA PPP Forgiveness Requests</h1>
+            </div>
+
+            <!-- Requests Table -->
+            <table class="requests-table">
+                <thead>
+                    <tr>
+                        <th>Business Name</th>
+                        <th>PPP Loan Number</th>
+                        <th>Loan Amount</th>
+                        <th>Processing Fee</th>
+                        <th>Lender</th>
+                        <th>Status</th>
+                        <th>Submitted Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            No forgiveness requests found. Click "Start New Forgiveness Request" above to begin.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="forgiveness-form.html" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Start New Forgiveness Request
+                </a>
+                <button onclick="refreshRequests()" class="btn-secondary">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Requests
+                </button>
+                <a href="#" class="btn-secondary">
+                    Take a Guided Tour
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Help Button -->
+    <button class="help-button" onclick="showHelp()">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <!-- Bottom Banner -->
+    <footer class="bottom-banner">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://connect.sba.gov/Home/Accessibility" target="_blank" rel="noopener noreferrer">Accessibility</a>
+                    <a href="https://www.sba.gov/document/policy-guidance--privacy-impact-assessments" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                    <a href="/terms-and-conditions">Terms of Service</a>
+                    <a href="tel:877-552-2692">Customer Service: 877-552-2692</a>
+                </div>
+                <div class="copyright">
+                    <strong>Copyright ©2021 Small Business Administration.</strong> All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentUser = null;
+
+        // Check authentication and load user data
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            try {
+                firebase.onAuthStateChanged(firebase.auth, async (user) => {
+                    if (!user) {
+                        redirectToLogin();
+                        return;
+                    }
+
+                    currentUser = user;
+                    await loadUserProfile();
+                    await loadUserRequests();
+                });
+
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+                redirectToLogin();
+            }
+        });
+
+        async function loadUserProfile() {
+            try {
+                // Try to get user profile from Firebase
+                const { data: profile, error } = await firebaseHelpers.getUserProfile(currentUser.uid);
+
+                if (error && !error.message.includes('not found')) {
+                    console.error('Profile loading error:', error);
+                }
+
+                // Update welcome message
+                const welcomeElement = document.querySelector('.welcome-text');
+                if (welcomeElement) {
+                    const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}`.trim() :
+                                      currentUser.displayName || currentUser.email;
+                    welcomeElement.textContent = `Welcome, ${displayName}`;
+                }
+
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+
+        async function loadUserRequests(showLoading = false) {
+            try {
+                console.log('Loading requests for user:', currentUser?.uid);
+                const tableBody = document.querySelector('.requests-table tbody');
+
+                // Show loading state if requested
+                if (showLoading && tableBody) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i> Loading requests...
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                // Load user's forgiveness requests from Firebase
+                console.log('Current user UID:', currentUser.uid);
+                const { data: requests, error } = await firebaseHelpers.getForgivenessRequests(currentUser.uid);
+
+                console.log('Requests response:', { data: requests, error });
+
+                // Debug: Let's also try to get all forgiveness requests to see what's in the database
+                const { data: allRequests, error: allError } = await firebaseHelpers.getAllForgivenessRequests();
+                console.log('All forgiveness requests:', { data: allRequests, error: allError });
+
+                // Handle action buttons and header refresh button visibility
+                const actionButtons = document.querySelector('.action-buttons');
+                const headerRefreshBtn = document.getElementById('headerRefreshBtn');
+
+                if (tableBody) {
+                    if (error || !requests || requests.length === 0) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    No forgiveness requests found. Click "Start New Forgiveness Request" above to begin.
+                                </td>
+                            </tr>
+                        `;
+                        // Show action buttons when no requests, hide header refresh button
+                        if (actionButtons) {
+                            actionButtons.style.display = 'flex';
+                        }
+                        if (headerRefreshBtn) {
+                            headerRefreshBtn.style.display = 'none';
+                        }
+                    } else {
+                        // Hide action buttons when there are requests, show header refresh button
+                        if (actionButtons) {
+                            actionButtons.style.display = 'none';
+                        }
+                        if (headerRefreshBtn) {
+                            headerRefreshBtn.style.display = 'flex';
+                        }
+                        // Display user requests with all the new fields
+                        tableBody.innerHTML = requests.map(request => {
+                            // Format loan amount
+                            const loanAmount = request.loanAmount || 'N/A';
+
+                            // Format processing fee
+                            const processingFee = request.processingFee ?
+                                firebaseHelpers.formatCurrency(request.processingFee) : 'N/A';
+
+                            // Format status
+                            const status = request.requestStatus || 'draft';
+                            const statusDisplay = status.charAt(0).toUpperCase() + status.slice(1);
+
+                            // Format submitted date
+                            const submittedDate = request.submittedAt ?
+                                firebaseHelpers.formatDate(request.submittedAt) :
+                                (request.createdAt ? firebaseHelpers.formatDate(request.createdAt) : 'N/A');
+
+                            return `
+                                <tr>
+                                    <td>${request.businessName || 'N/A'}</td>
+                                    <td>${request.pppLoanNumber || 'N/A'}</td>
+                                    <td class="amount-cell">${loanAmount}</td>
+                                    <td class="fee-cell">${processingFee}</td>
+                                    <td class="lender-cell">${request.lenderName || 'N/A'}</td>
+                                    <td><span class="status-badge status-${status}">${statusDisplay}</span></td>
+                                    <td>${submittedDate}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user requests:', error);
+                // Show error state
+                const tableBody = document.querySelector('.requests-table tbody');
+                const actionButtons = document.querySelector('.action-buttons');
+                const headerRefreshBtn = document.getElementById('headerRefreshBtn');
+
+                if (tableBody) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                Error loading requests. Please refresh the page.
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                // Show action buttons on error, hide header refresh button
+                if (actionButtons) {
+                    actionButtons.style.display = 'flex';
+                }
+                if (headerRefreshBtn) {
+                    headerRefreshBtn.style.display = 'none';
+                }
+            }
+        }
+
+        async function refreshRequests() {
+            if (!currentUser) {
+                alert('Please sign in to refresh requests.');
+                return;
+            }
+
+            await loadUserRequests(true); // Show loading state
+        }
+
+        function redirectToLogin() {
+            alert('Please sign in to access the dashboard.');
+            window.location.href = 'index-new.html';
+        }
+
+        async function handleSignOut() {
+            try {
+                const { error } = await firebaseHelpers.signOut();
+                if (error) {
+                    console.error('Sign out error:', error);
+                    alert('Error signing out. Please try again.');
+                    return;
+                }
+
+                // Clear session storage
+                sessionStorage.clear();
+
+                // Redirect to login
+                window.location.href = 'index-new.html';
+
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Error signing out. Please try again.');
+            }
+        }
+
+        function startApplication() {
+            window.location.href = 'forgiveness-form.html';
+        }
+
+        function showHelp() {
+            alert('Help and Support\n\nFor assistance with your PPP forgiveness application:\n\n• Call Customer Service: 877-552-2692\n• Visit: caweb.sba.gov/cls/dsp_contactus.cfm\n• Take the Guided Tour for step-by-step instructions');
+        }
+    </script>
+</body>
+</html>

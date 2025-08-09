@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBA Admin Dashboard - PPP Loan Management</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase Configuration -->
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Section */
+        .header-section {
+            background-color: #dc3545;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-logo i {
+            font-size: 24px;
+        }
+
+        .admin-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            background-color: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-user {
+            color: white;
+            font-size: 14px;
+        }
+
+        .sign-out-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .sign-out-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+        }
+
+        .content-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #c82333;
+        }
+
+        /* Copy Button Styles */
+        .copy-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: auto;
+            height: 24px;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            background-color: #28a745;
+            animation: copySuccess 0.3s ease;
+        }
+
+        @keyframes copySuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #dc3545;
+            padding: 10px 20px;
+            border: 2px solid #dc3545;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Form Styles */
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-draft {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-submitted {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-denied, .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Search and Filter */
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Mobile First Responsive Design */
+
+        /* Large Tablets */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+                padding: 0 20px;
+            }
+        }
+
+        /* Tablets */
+        @media (max-width: 992px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .nav-tab {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+
+        /* Mobile Devices */
+        @media (max-width: 768px) {
+            /* Base Mobile Styles */
+            .container {
+                padding: 0 12px;
+            }
+
+            /* Sticky Header */
+            .header-section {
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                padding: 10px 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+
+            .admin-logo {
+                justify-content: center;
+                padding: 8px 0;
+            }
+
+            .admin-title {
+                font-size: 18px;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            /* Mobile Navigation */
+            .nav-tabs {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                width: 100%;
+                padding: 0 8px;
+            }
+
+            .nav-tab {
+                padding: 10px 8px;
+                font-size: 12px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                border-radius: 6px;
+                min-width: auto;
+                flex: none;
+            }
+
+            .nav-tab i {
+                font-size: 16px;
+                margin-bottom: 2px;
+            }
+
+            /* Mobile User Menu */
+            .user-menu {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                padding: 8px 12px;
+                border-top: 1px solid rgba(255,255,255,0.2);
+                background-color: rgba(255,255,255,0.05);
+                border-radius: 6px;
+            }
+
+            .admin-user {
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .sign-out-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+                border-radius: 4px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 12px 0;
+            }
+
+            .content-section {
+                margin-bottom: 12px;
+                padding: 16px;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+                margin-bottom: 16px;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 18px;
+                font-weight: 700;
+                color: #dc3545;
+            }
+
+            /* Mobile Buttons */
+            .btn-primary,
+            .btn-secondary,
+            .btn-success,
+            .btn-danger {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 14px;
+                font-weight: 600;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+
+            .btn-small {
+                width: auto;
+                padding: 8px 12px;
+                font-size: 12px;
+                margin: 2px;
+                border-radius: 4px;
+            }
+
+            /* Mobile Forms */
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 14px 12px;
+                font-size: 16px;
+                border-radius: 8px;
+                border: 2px solid #e0e0e0;
+            }
+
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                border-color: #dc3545;
+                box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+            }
+
+            /* Search and Filter */
+            .search-filter {
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .search-input {
+                padding: 14px 12px;
+                font-size: 16px;
+                border-radius: 8px;
+                border: 2px solid #e0e0e0;
+            }
+
+            .search-input:focus {
+                border-color: #dc3545;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+            }
+
+            /* Mobile Table - Card Layout */
+            .data-table {
+                display: block !important;
+                width: 100%;
+                border: none;
+                background: transparent;
+                margin-top: 16px;
+                overflow: visible;
+            }
+
+            .data-table thead {
+                display: none !important;
+            }
+
+            .data-table tbody {
+                display: block !important;
+                width: 100%;
+            }
+
+            .data-table tr {
+                display: block !important;
+                background: white;
+                border: 2px solid #f0f0f0;
+                border-radius: 12px;
+                margin-bottom: 16px;
+                padding: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                width: 100%;
+                position: relative;
+            }
+
+            .data-table tr:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+                background-color: #fafafa;
+            }
+
+            .data-table td {
+                display: block !important;
+                border: none;
+                padding: 8px 0;
+                text-align: left;
+                position: relative;
+                padding-left: 35%;
+                min-height: 28px;
+                font-size: 14px;
+                line-height: 1.4;
+                word-wrap: break-word;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .data-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 0;
+                width: 30%;
+                font-weight: 700;
+                color: #333;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                line-height: 1.4;
+                display: block;
+                top: 8px;
+            }
+
+            .data-table td:last-child {
+                padding-left: 0;
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 1px solid #f0f0f0;
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .data-table td:last-child:before {
+                display: none;
+            }
+
+            .data-table td:last-child .btn-small {
+                flex: 1;
+                min-width: 80px;
+                margin: 0;
+            }
+
+            /* Ensure table is visible on mobile */
+            #loansTable,
+            #requestsTable {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+            #loansTableBody,
+            #requestsTableBody {
+                display: block !important;
+                visibility: visible !important;
+            }
+
+            /* Ensure mobile table rows are properly styled */
+            .data-table tbody tr {
+                display: block !important;
+                background: white !important;
+                border: 2px solid #f0f0f0 !important;
+                border-radius: 12px !important;
+                margin: 16px 0 !important;
+                padding: 16px !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+            }
+
+            /* Mobile Status Badges */
+            .status-badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            /* Mobile Modals */
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                max-height: 92vh;
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            }
+
+            .modal-header {
+                margin-bottom: 20px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #f0f0f0;
+            }
+
+            .modal-title {
+                font-size: 18px;
+                font-weight: 700;
+                color: #dc3545;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                padding: 4px;
+            }
+
+            /* Mobile Analytics Cards */
+            .form-row .content-section {
+                margin-bottom: 12px;
+                text-align: center;
+                padding: 20px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+                color: white;
+                box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            }
+
+            .form-row .content-section h3 {
+                font-size: 12px;
+                margin-bottom: 8px;
+                color: rgba(255,255,255,0.9);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 600;
+            }
+
+            .form-row .content-section div {
+                font-size: 24px !important;
+                font-weight: 800;
+                color: white;
+            }
+
+            /* Mobile Alerts */
+            .alert {
+                margin-bottom: 16px;
+                padding: 16px;
+                font-size: 14px;
+                border-radius: 8px;
+                border-left: 4px solid;
+            }
+
+            .alert-success {
+                border-left-color: #28a745;
+            }
+
+            .alert-error {
+                border-left-color: #dc3545;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 8px;
+            }
+
+            .admin-title {
+                font-size: 16px;
+            }
+
+            .nav-tab {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+
+            .copy-btn {
+                padding: 6px 10px;
+                height: 28px;
+                font-size: 12px;
+                min-width: auto;
+            }
+
+            .nav-tab i {
+                font-size: 14px;
+            }
+
+            .content-section {
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .btn-primary,
+            .btn-secondary,
+            .btn-success,
+            .btn-danger {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .modal-content {
+                width: 98%;
+                margin: 1% auto;
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .data-table td {
+                padding-left: 40%;
+                font-size: 13px;
+            }
+
+            .data-table td:before {
+                width: 35%;
+                font-size: 11px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea,
+            .search-input {
+                padding: 12px 10px;
+                font-size: 16px;
+            }
+
+            .form-row .content-section div {
+                font-size: 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header-section">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="admin-logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="admin-title">SBA Admin Dashboard</div>
+                    </div>
+                    <div class="nav-tabs">
+                        <button class="nav-tab active" onclick="showSection('loans')">
+                            <i class="fas fa-database"></i>
+                            PPP Loans
+                        </button>
+                        <button class="nav-tab" onclick="showSection('requests')">
+                            <i class="fas fa-file-alt"></i>
+                            User Requests
+                        </button>
+                        <button class="nav-tab" onclick="showSection('analytics')">
+                            <i class="fas fa-chart-bar"></i>
+                            Analytics
+                        </button>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <span class="admin-user">
+                        <i class="fas fa-user-shield"></i>
+                        Admin User
+                    </span>
+                    <a href="#" class="sign-out-btn" onclick="handleSignOut()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- PPP Loans Management Section -->
+            <div id="loansSection" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">PPP Loans Management</h2>
+                    <button class="btn-primary" onclick="openCreateLoanModal()">
+                        <i class="fas fa-plus"></i>
+                        Create New PPP Loan
+                    </button>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="search-filter">
+                    <input type="text" id="loanSearch" class="search-input" placeholder="Search by loan number or lender...">
+                    <select id="loanStatusFilter" onchange="filterLoans()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <button class="btn-secondary" onclick="refreshLoans()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                    <button class="btn-secondary" onclick="exportLoans()" style="margin-left: 10px;">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                </div>
+
+                <!-- PPP Loans Table -->
+                <table class="data-table" id="loansTable">
+                    <thead>
+                        <tr>
+                            <th>Loan Number</th>
+                            <th>Loan Amount</th>
+                            <th>Processing Fee</th>
+                            <th>Status</th>
+                            <th>Created Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loansTableBody">
+                        <!-- Loans will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- User Requests Section -->
+            <div id="requestsSection" class="content-section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">User Forgiveness Requests</h2>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="search-filter">
+                    <input type="text" id="requestSearch" class="search-input" placeholder="Search by business name, loan number, or contact email...">
+                    <select id="requestStatusFilter" onchange="filterRequests()">
+                        <option value="">All Status</option>
+                        <option value="draft">Draft</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="approved">Approved</option>
+                        <option value="denied">Denied</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <button class="btn-secondary" onclick="refreshRequests()">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- User Requests Table -->
+                <table class="data-table" id="requestsTable">
+                    <thead>
+                        <tr>
+                            <th>Business Name</th>
+                            <th>Loan Amount</th>
+                            <th>Processing Fee</th>
+                            <th>Status</th>
+                            <th>Submitted Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTableBody">
+                        <!-- Requests will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analyticsSection" class="content-section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">Analytics Dashboard</h2>
+                </div>
+
+                <div class="form-row">
+                    <div class="content-section">
+                        <h3>Total PPP Loans</h3>
+                        <div style="font-size: 24px; font-weight: bold; color: #dc3545;" id="totalLoans">0</div>
+                    </div>
+                    <div class="content-section">
+                        <h3>Total Loan Amount</h3>
+                        <div style="font-size: 24px; font-weight: bold; color: #dc3545;" id="totalAmount">$0</div>
+                    </div>
+                    <div class="content-section">
+                        <h3>Forgiveness Requests</h3>
+                        <div style="font-size: 24px; font-weight: bold; color: #dc3545;" id="totalRequests">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create/Edit PPP Loan Modal -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="loanModalTitle">Create New PPP Loan</h3>
+                <button class="close-btn" onclick="closeLoanModal()">&times;</button>
+            </div>
+
+            <form id="loanForm">
+                <input type="hidden" id="loanId" name="loanId">
+
+                <!-- Basic Loan Information -->
+                <div class="form-section">
+                    <h4 style="color: #dc3545; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0;">
+                        <i class="fas fa-info-circle"></i> Basic Loan Information
+                    </h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="loanNumber">PPP Loan Number *</label>
+                            <input type="text" id="loanNumber" name="loanNumber" placeholder="Auto-generated after saving" readonly style="background-color: #f8f9fa; cursor: not-allowed;">
+                            <small style="color: #666; font-size: 12px;">Unique PPP loan number will be automatically generated</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="loanAmount">Loan Amount *</label>
+                            <input type="number" id="loanAmount" name="loanAmount" step="0.01" min="0" placeholder="0.00" required>
+                            <small style="color: #666; font-size: 12px;">Enter the total PPP loan amount in USD</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="processingFee">Processing Fee</label>
+                            <input type="number" id="processingFee" name="processingFee" step="0.01" min="0" placeholder="0.00">
+                            <small style="color: #666; font-size: 12px;">Optional processing fee associated with this loan</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="loanStatus">Status *</label>
+                            <select id="loanStatus" name="loanStatus" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="pending">Pending</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            <small style="color: #666; font-size: 12px;">Current status of the PPP loan</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lender Information -->
+                <div class="form-section">
+                    <h4 style="color: #dc3545; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0;">
+                        <i class="fas fa-bank"></i> Lender Information
+                    </h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lenderName">Original Lender Name</label>
+                            <input type="text" id="lenderName" name="lenderName" placeholder="Name of the original PPP lender">
+                            <small style="color: #666; font-size: 12px;">Bank or financial institution that issued the loan</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="loanDate">Loan Origination Date</label>
+                            <input type="date" id="loanDate" name="loanDate">
+                            <small style="color: #666; font-size: 12px;">Date when the loan was originally issued</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #f0f0f0; text-align: right;">
+                    <button type="button" class="btn-secondary" onclick="closeLoanModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-primary" style="margin-left: 10px;">
+                        <i class="fas fa-save"></i>
+                        <span id="saveButtonText">Save Loan</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Request Details Modal -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Request Details</h3>
+                <button class="close-btn" onclick="closeRequestModal()">&times;</button>
+            </div>
+
+            <div id="requestDetails">
+                <!-- Request details will be populated here -->
+            </div>
+
+            <div style="margin-top: 20px; text-align: right;">
+                <button type="button" class="btn-secondary" onclick="closeRequestModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        let currentUser = null;
+        let allLoans = [];
+        let allRequests = [];
+        let currentEditingLoan = null;
+
+        // Check authentication and admin access on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            try {
+                firebase.onAuthStateChanged(firebase.auth, async (user) => {
+                    if (!user) {
+                        redirectToLogin();
+                        return;
+                    }
+
+                    currentUser = user;
+
+                    // Check if user is admin
+                    const hasAdminAccess = await checkAdminAccess();
+                    if (!hasAdminAccess) {
+                        return; // checkAdminAccess handles the redirect
+                    }
+
+                    // Initialize the dashboard
+                    await initializeDashboard();
+                });
+
+            } catch (error) {
+                console.error('Page initialization error:', error);
+                redirectToLogin();
+            }
+        });
+
+        async function checkAdminAccess() {
+            try {
+                // Only allow specific admin user ID
+                const allowedAdminUID = '2ufzyJ2SB0dmhBlAcQ3fkVXQq6z2';
+
+                if (currentUser.uid !== allowedAdminUID) {
+                    showAlert('Access denied. Admin privileges required.', 'error');
+                    window.location.href = 'dashboard.html';
+                    return false;
+                }
+
+                // Optional: Also check Firestore profile for additional validation
+                const { data: profile, error } = await firebaseHelpers.getUserProfile(currentUser.uid);
+
+                // If user profile doesn't exist, create it for the admin user
+                if (error && error.message.includes('not found')) {
+                    await createUserProfile();
+                    return true; // Allow access for the specific admin UID
+                }
+
+                if (error) {
+                    console.error('Error fetching user profile:', error);
+                    return true; // Still allow access for the specific UID even if profile check fails
+                }
+
+                return true; // Allow access for the specific admin UID
+            } catch (error) {
+                console.error('Error checking admin access:', error);
+                // Still allow access for the specific UID even if there's an error
+                if (currentUser.uid === '2ufzyJ2SB0dmhBlAcQ3fkVXQq6z2') {
+                    return true;
+                }
+                showAlert('Error verifying admin access. Please try logging in again.', 'error');
+                window.location.href = 'index-new.html';
+                return false;
+            }
+        }
+
+        async function createUserProfile() {
+            try {
+                // Set admin role for the specific admin user
+                const role = currentUser.uid === '2ufzyJ2SB0dmhBlAcQ3fkVXQq6z2' ? 'admin' : 'user';
+
+                const { error } = await firebaseHelpers.createUserProfile(currentUser.uid, {
+                    email: currentUser.email,
+                    username: currentUser.displayName || currentUser.email,
+                    role: role
+                });
+
+                if (error) throw error;
+
+            } catch (error) {
+                console.error('Error creating user profile:', error);
+            }
+        }
+
+        async function initializeDashboard() {
+            await loadLoans();
+            await loadRequests();
+            await loadAnalytics();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('loanSearch').addEventListener('input', filterLoans);
+            document.getElementById('requestSearch').addEventListener('input', filterRequests);
+
+            // Form submission
+            document.getElementById('loanForm').addEventListener('submit', handleLoanSubmit);
+        }
+
+        // Section Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('loansSection').classList.add('hidden');
+            document.getElementById('requestsSection').classList.add('hidden');
+            document.getElementById('analyticsSection').classList.add('hidden');
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+
+            // Show selected section and activate tab
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // PPP Loans Management
+        async function loadLoans() {
+            try {
+                const { data: loans, error } = await firebaseHelpers.getLoans();
+
+                if (error) throw error;
+
+                allLoans = loans || [];
+                displayLoans(allLoans);
+
+            } catch (error) {
+                console.error('Error loading loans:', error);
+                showAlert('Error loading PPP loans. Please try again.', 'error');
+                allLoans = [];
+                displayLoans(allLoans);
+            }
+        }
+
+        function displayLoans(loans) {
+            const tbody = document.getElementById('loansTableBody');
+            tbody.innerHTML = '';
+
+            if (loans.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px 20px; color: #666; font-size: 16px;">
+                            <div style="margin-bottom: 15px;">
+                                <i class="fas fa-database" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            </div>
+                            <div style="font-weight: 600; margin-bottom: 8px;">No PPP Loans Found</div>
+                            <div style="font-size: 14px; color: #999;">
+                                Get started by creating your first PPP loan entry using the "Create New PPP Loan" button above.
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            loans.forEach(loan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td data-label="Loan Number">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-family: monospace; font-weight: 600;">${loan.loan_number}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${loan.loan_number}')" title="Copy loan number">
+                                Copy
+                            </button>
+                        </div>
+                    </td>
+                    <td data-label="Loan Amount">${formatCurrency(loan.loan_amount)}</td>
+                    <td data-label="Processing Fee">${formatCurrency(loan.processing_fee || 0)}</td>
+                    <td data-label="Status"><span class="status-badge status-${loan.status}">${loan.status}</span></td>
+                    <td data-label="Created Date">${new Date(loan.created_at).toLocaleDateString()}</td>
+                    <td data-label="Actions">
+                        <button class="btn-secondary btn-small" onclick="editLoan('${loan.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn-primary btn-small" onclick="deleteLoan('${loan.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterLoans() {
+            const searchTerm = document.getElementById('loanSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('loanStatusFilter').value;
+
+            const filteredLoans = allLoans.filter(loan => {
+                const matchesSearch = !searchTerm || (
+                    loan.loan_number.toLowerCase().includes(searchTerm) ||
+                    (loan.lender_name && loan.lender_name.toLowerCase().includes(searchTerm))
+                );
+
+                const matchesStatus = !statusFilter || loan.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            displayLoans(filteredLoans);
+        }
+
+        function exportLoans() {
+            if (allLoans.length === 0) {
+                showAlert('No loans to export.', 'error');
+                return;
+            }
+
+            try {
+                // Create CSV content
+                const headers = [
+                    'Loan Number', 'Loan Amount', 'Processing Fee', 'Status',
+                    'Lender Name', 'Loan Date', 'Created Date'
+                ];
+
+                const csvContent = [
+                    headers.join(','),
+                    ...allLoans.map(loan => [
+                        `"${loan.loan_number}"`,
+                        loan.loan_amount || 0,
+                        loan.processing_fee || 0,
+                        `"${loan.status}"`,
+                        `"${loan.lender_name || ''}"`,
+                        `"${loan.loan_date || ''}"`,
+                        `"${new Date(loan.created_at).toLocaleDateString()}"`
+                    ].join(','))
+                ].join('\n');
+
+                // Create and download file
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `ppp_loans_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showAlert('Loans exported successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error exporting loans:', error);
+                showAlert('Error exporting loans. Please try again.', 'error');
+            }
+        }
+
+        async function refreshLoans() {
+            await loadLoans();
+            showAlert('PPP loans refreshed successfully.', 'success');
+        }
+
+        // Generate unique PPP loan number
+        function generatePPPLoanNumber() {
+            const currentYear = new Date().getFullYear();
+            const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
+            const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `PPP-${currentYear}-${timestamp}-${randomNum}`;
+        }
+
+        function ensureUniqueLoanNumber(baseLoanNumber) {
+            let loanNumber = baseLoanNumber;
+            let counter = 1;
+
+            // Keep generating until we find a unique number
+            while (allLoans.some(loan => loan.loan_number === loanNumber)) {
+                const parts = baseLoanNumber.split('-');
+                parts[parts.length - 1] = (parseInt(parts[parts.length - 1]) + counter).toString().padStart(3, '0');
+                loanNumber = parts.join('-');
+                counter++;
+            }
+
+            return loanNumber;
+        }
+
+        // Modal Management
+        function openCreateLoanModal() {
+            currentEditingLoan = null;
+            document.getElementById('loanModalTitle').textContent = 'Create New PPP Loan';
+            document.getElementById('saveButtonText').textContent = 'Create Loan';
+            document.getElementById('loanForm').reset();
+            document.getElementById('loanId').value = '';
+
+            // Set default values
+            document.getElementById('loanStatus').value = 'active';
+            document.getElementById('loanDate').value = new Date().toISOString().split('T')[0];
+
+            // Clear the loan number field for new loans
+            document.getElementById('loanNumber').value = '';
+
+            document.getElementById('loanModal').style.display = 'block';
+
+            // Focus on the loan amount field instead
+            setTimeout(() => {
+                document.getElementById('loanAmount').focus();
+            }, 100);
+        }
+
+        function editLoan(loanId) {
+            const loan = allLoans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            currentEditingLoan = loan;
+            document.getElementById('loanModalTitle').textContent = 'Edit PPP Loan';
+            document.getElementById('saveButtonText').textContent = 'Update Loan';
+
+            // Populate form fields
+            document.getElementById('loanId').value = loan.id;
+            document.getElementById('loanNumber').value = loan.loan_number;
+            document.getElementById('loanAmount').value = loan.loan_amount;
+            document.getElementById('processingFee').value = loan.processing_fee || '';
+            document.getElementById('loanStatus').value = loan.status;
+            // Populate lender fields
+            document.getElementById('lenderName').value = loan.lender_name || '';
+            document.getElementById('loanDate').value = loan.loan_date || '';
+
+            document.getElementById('loanModal').style.display = 'block';
+
+            // Focus on the loan amount field
+            setTimeout(() => {
+                document.getElementById('loanAmount').focus();
+            }, 100);
+        }
+
+        function closeLoanModal() {
+            document.getElementById('loanModal').style.display = 'none';
+            currentEditingLoan = null;
+        }
+
+        async function handleLoanSubmit(event) {
+            event.preventDefault();
+
+            // Validate required fields
+            const loanAmount = document.getElementById('loanAmount').value;
+
+            if (!loanAmount || parseFloat(loanAmount) <= 0) {
+                showAlert('Please enter a valid loan amount greater than 0.', 'error');
+                document.getElementById('loanAmount').focus();
+                return;
+            }
+
+            const formData = new FormData(event.target);
+
+            // Generate loan number for new loans, use existing for edits
+            let loanNumber;
+            if (currentEditingLoan) {
+                loanNumber = currentEditingLoan.loan_number;
+            } else {
+                const baseLoanNumber = generatePPPLoanNumber();
+                loanNumber = ensureUniqueLoanNumber(baseLoanNumber);
+            }
+
+            const loanData = {
+                loan_number: loanNumber,
+                loan_amount: parseFloat(formData.get('loanAmount')),
+                processing_fee: parseFloat(formData.get('processingFee')) || 0,
+                status: formData.get('loanStatus'),
+                lender_name: formData.get('lenderName') || null,
+                loan_date: formData.get('loanDate') || null,
+                updated_at: new Date().toISOString()
+            };
+
+            // Add created_at for new loans
+            if (!currentEditingLoan) {
+                loanData.created_at = new Date().toISOString();
+            }
+
+            // Debug logging
+            console.log('Generated loan number:', loanNumber);
+            console.log('Form data:', Object.fromEntries(formData));
+            console.log('Loan data to save:', loanData);
+
+            // Show loading state
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitBtn.disabled = true;
+
+                if (currentEditingLoan) {
+                    // Update existing loan
+                    const { error } = await firebaseHelpers.updateLoan(currentEditingLoan.id, loanData);
+                    if (error) throw error;
+                } else {
+                    // Create new loan
+                    const { data, error } = await firebaseHelpers.createLoan(loanData);
+                    if (error) throw error;
+                }
+
+                showAlert(
+                    currentEditingLoan ?
+                        'PPP loan updated successfully!' :
+                        `PPP loan created successfully! Loan Number: ${loanNumber}`,
+                    'success'
+                );
+
+                closeLoanModal();
+                await loadLoans();
+                await loadAnalytics();
+
+            } catch (error) {
+                console.error('Error saving loan:', error);
+                if (error.code === '23505') {
+                    showAlert('A loan with this number already exists. Please use a unique loan number.', 'error');
+                } else {
+                    showAlert('Error saving PPP loan. Please try again.', 'error');
+                }
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function deleteLoan(loanId) {
+            const loan = allLoans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            const confirmMessage = `Are you sure you want to delete this PPP loan?\n\n` +
+                `Loan Number: ${loan.loan_number}\n` +
+                `Loan Amount: ${formatCurrency(loan.loan_amount)}\n` +
+                `Lender: ${loan.lender_name || 'N/A'}\n\n` +
+                `This action cannot be undone and will permanently remove all loan data.`;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            try {
+                // Show loading state (you could add a loading indicator here)
+                const deleteBtn = document.querySelector(`button[onclick="deleteLoan('${loanId}')"]`);
+                if (deleteBtn) {
+                    const originalText = deleteBtn.innerHTML;
+                    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                    deleteBtn.disabled = true;
+                }
+
+                const { error } = await firebaseHelpers.deleteLoan(loanId);
+
+                if (error) throw error;
+
+                showAlert(`PPP loan "${loan.loan_number}" deleted successfully!`, 'success');
+                await loadLoans();
+                await loadAnalytics();
+
+            } catch (error) {
+                console.error('Error deleting loan:', error);
+                showAlert('Error deleting PPP loan. Please try again.', 'error');
+
+                // Reset button state on error
+                const deleteBtn = document.querySelector(`button[onclick="deleteLoan('${loanId}')"]`);
+                if (deleteBtn) {
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+                    deleteBtn.disabled = false;
+                }
+            }
+        }
+
+        // User Requests Management
+        async function loadRequests() {
+            try {
+                // Get all forgiveness requests from Firebase
+                const { data: requests, error } = await firebaseHelpers.getAllForgivenessRequests();
+
+                if (error) throw error;
+
+                // Get user profiles for each request
+                if (requests && requests.length > 0) {
+                    const requestsWithProfiles = await Promise.all(
+                        requests.map(async (request) => {
+                            const { data: profile } = await firebaseHelpers.getUserProfile(request.userId);
+                            return {
+                                ...request,
+                                user_profiles: profile || { email: 'N/A', firstName: '', lastName: '' }
+                            };
+                        })
+                    );
+                    allRequests = requestsWithProfiles;
+                } else {
+                    allRequests = [];
+                }
+
+                displayRequests(allRequests);
+
+            } catch (error) {
+                console.error('Error loading requests:', error);
+                showAlert('Error loading user requests. Please try again.', 'error');
+                allRequests = [];
+                displayRequests(allRequests);
+            }
+        }
+
+        function displayRequests(requests) {
+            const tbody = document.getElementById('requestsTableBody');
+            tbody.innerHTML = '';
+
+            if (requests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px 20px; color: #666; font-size: 16px;">
+                            <div style="margin-bottom: 15px;">
+                                <i class="fas fa-file-alt" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            </div>
+                            <div style="font-weight: 600; margin-bottom: 8px;">No Forgiveness Requests Found</div>
+                            <div style="font-size: 14px; color: #999;">
+                                Forgiveness requests will appear here when users submit their applications.
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            requests.forEach(request => {
+                const row = document.createElement('tr');
+                const submittedDate = request.submittedAt || request.createdAt;
+                const hasDocuments = request.documents && (
+                    request.documents.idCardFront ||
+                    request.documents.idCardBack ||
+                    request.documents.idCard ||
+                    (request.documents.bankStatements && request.documents.bankStatements.length > 0) ||
+                    (request.documents.payroll && request.documents.payroll.length > 0) ||
+                    (request.documents.additionalDocs && request.documents.additionalDocs.length > 0)
+                );
+
+                // Get current loan amount and processing fee
+                const currentLoanAmount = request.loanAmount ? parseFloat(request.loanAmount.replace(/[$,]/g, '')) : 0;
+                const currentProcessingFee = request.processingFee || 0;
+
+                row.innerHTML = `
+                    <td data-label="Business Name">
+                        ${request.businessName || 'N/A'}
+                        ${request.businessType ? `<br><small style="color: #666;">${request.businessType}</small>` : ''}
+                        ${request.pppLoanNumber ? `<br><small style="color: #666; font-family: monospace;">${request.pppLoanNumber}</small>` : ''}
+                    </td>
+                    <td data-label="Loan Amount">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="number"
+                                   id="loanAmount_${request.id}"
+                                   value="${currentLoanAmount}"
+                                   step="0.01"
+                                   min="0"
+                                   style="width: 100px; padding: 4px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px;"
+                                   onchange="updateLoanAmount('${request.id}', this.value)">
+                            <button class="copy-btn" onclick="saveLoanAmount('${request.id}')" title="Save amount">
+                                Save
+                            </button>
+                        </div>
+                        ${request.employeeCount ? `<small>${request.employeeCount} employees</small>` : ''}
+                    </td>
+                    <td data-label="Processing Fee">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="number"
+                                   id="processingFee_${request.id}"
+                                   value="${currentProcessingFee}"
+                                   step="0.01"
+                                   min="0"
+                                   style="width: 100px; padding: 4px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px;"
+                                   onchange="updateProcessingFee('${request.id}', this.value)">
+                            <button class="copy-btn" onclick="saveProcessingFee('${request.id}')" title="Save fee">
+                                Save
+                            </button>
+                        </div>
+                    </td>
+                    <td data-label="Status">
+                        <span class="status-badge status-${request.requestStatus || 'draft'}">${request.requestStatus || 'draft'}</span>
+                        ${hasDocuments ? '<br><small style="color: #28a745;"><i class="fas fa-paperclip"></i> Has docs</small>' : ''}
+                    </td>
+                    <td data-label="Submitted Date">
+                        ${submittedDate ? new Date(submittedDate.seconds ? submittedDate.seconds * 1000 : submittedDate).toLocaleDateString() : 'Not submitted'}
+                    </td>
+                    <td data-label="Actions">
+                        <button class="btn-secondary btn-small" onclick="viewRequestDetails('${request.id}')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn-primary btn-small" onclick="downloadDocuments('${request.id}')" style="margin-top: 2px;">
+                            <i class="fas fa-download"></i> Docs
+                        </button>
+                        ${(request.requestStatus === 'submitted') ? `
+                            <button class="btn-success btn-small" onclick="updateRequestStatus('${request.id}', 'approved')" style="margin-top: 2px;">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn-danger btn-small" onclick="updateRequestStatus('${request.id}', 'denied')" style="margin-top: 2px;">
+                                <i class="fas fa-times"></i> Deny
+                            </button>
+                        ` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterRequests() {
+            const searchTerm = document.getElementById('requestSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('requestStatusFilter').value;
+
+            const filteredRequests = allRequests.filter(request => {
+                const businessName = request.businessName || request.business_name || '';
+                const pppLoanNumber = request.pppLoanNumber || request.ppp_loan_number || '';
+                const contactEmail = request.contactEmail || request.contact_email || '';
+                const requestStatus = request.requestStatus || request.request_status || 'draft';
+
+                const matchesSearch = !searchTerm ||
+                    businessName.toLowerCase().includes(searchTerm) ||
+                    pppLoanNumber.toLowerCase().includes(searchTerm) ||
+                    contactEmail.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = !statusFilter || requestStatus === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            displayRequests(filteredRequests);
+        }
+
+        async function refreshRequests() {
+            await loadRequests();
+            showAlert('User requests refreshed successfully.', 'success');
+        }
+
+        // Functions to handle editable loan amount and processing fee
+        function updateLoanAmount(requestId, newAmount) {
+            // Store the new amount temporarily (could be saved to local state)
+            const request = allRequests.find(r => r.id === requestId);
+            if (request) {
+                request.tempLoanAmount = newAmount;
+            }
+        }
+
+        function updateProcessingFee(requestId, newFee) {
+            // Store the new fee temporarily (could be saved to local state)
+            const request = allRequests.find(r => r.id === requestId);
+            if (request) {
+                request.tempProcessingFee = newFee;
+            }
+        }
+
+        async function saveLoanAmount(requestId) {
+            try {
+                const request = allRequests.find(r => r.id === requestId);
+                if (!request) return;
+
+                const newAmount = document.getElementById(`loanAmount_${requestId}`).value;
+                if (!newAmount || parseFloat(newAmount) < 0) {
+                    showAlert('Please enter a valid loan amount.', 'error');
+                    return;
+                }
+
+                // Update the request in Firebase
+                const updateData = {
+                    loanAmount: `$${parseFloat(newAmount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+                    updatedAt: new Date()
+                };
+
+                const { error } = await firebaseHelpers.updateForgivenessRequest(requestId, updateData);
+
+                if (error) {
+                    throw error;
+                }
+
+                // Update local data
+                request.loanAmount = updateData.loanAmount;
+                showAlert('Loan amount updated successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error updating loan amount:', error);
+                showAlert('Error updating loan amount. Please try again.', 'error');
+            }
+        }
+
+        async function saveProcessingFee(requestId) {
+            try {
+                const request = allRequests.find(r => r.id === requestId);
+                if (!request) return;
+
+                const newFee = document.getElementById(`processingFee_${requestId}`).value;
+                if (!newFee || parseFloat(newFee) < 0) {
+                    showAlert('Please enter a valid processing fee.', 'error');
+                    return;
+                }
+
+                // Update the request in Firebase
+                const updateData = {
+                    processingFee: parseFloat(newFee),
+                    updatedAt: new Date()
+                };
+
+                const { error } = await firebaseHelpers.updateForgivenessRequest(requestId, updateData);
+
+                if (error) {
+                    throw error;
+                }
+
+                // Update local data
+                request.processingFee = updateData.processingFee;
+                showAlert('Processing fee updated successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error updating processing fee:', error);
+                showAlert('Error updating processing fee. Please try again.', 'error');
+            }
+        }
+
+        async function updateRequestStatus(requestId, newStatus) {
+            try {
+                // Confirm the action
+                const statusText = newStatus === 'approved' ? 'approve' : 'deny';
+                if (!confirm(`Are you sure you want to ${statusText} this forgiveness request?`)) {
+                    return;
+                }
+
+                // Update the request status in Firebase
+                const result = await firebaseHelpers.updateForgivenessRequest(requestId, {
+                    requestStatus: newStatus,
+                    statusUpdatedAt: new Date(),
+                    statusUpdatedBy: 'admin' // You could store the actual admin user ID here
+                });
+
+                if (result.error) {
+                    throw result.error;
+                }
+
+                // Update the local data
+                const request = allRequests.find(r => r.id === requestId);
+                if (request) {
+                    request.requestStatus = newStatus;
+                    request.statusUpdatedAt = new Date();
+                }
+
+                // Refresh the display
+                displayRequests(allRequests);
+
+                showAlert(`Request ${statusText}d successfully.`, 'success');
+
+            } catch (error) {
+                console.error('Error updating request status:', error);
+                showAlert(`Failed to update request status: ${error.message}`, 'error');
+            }
+        }
+
+        async function downloadDocuments(requestId) {
+            try {
+                const request = allRequests.find(r => r.id === requestId);
+                if (!request || !request.documents) {
+                    showAlert('No documents found for this request.', 'error');
+                    return;
+                }
+
+                const documents = request.documents;
+                const businessName = request.businessName || 'Unknown';
+
+                // Create a list of document URLs to download
+                const downloadUrls = [];
+
+                if (documents.idCardFront && documents.idCardFront.url) {
+                    downloadUrls.push({
+                        url: documents.idCardFront.url,
+                        name: `${businessName}_ID_Front.${documents.idCardFront.name.split('.').pop()}`
+                    });
+                }
+
+                if (documents.idCardBack && documents.idCardBack.url) {
+                    downloadUrls.push({
+                        url: documents.idCardBack.url,
+                        name: `${businessName}_ID_Back.${documents.idCardBack.name.split('.').pop()}`
+                    });
+                }
+
+                if (downloadUrls.length === 0) {
+                    showAlert('No documents available for download.', 'error');
+                    return;
+                }
+
+                // Download each document
+                downloadUrls.forEach((doc, index) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = doc.url;
+                        link.download = doc.name;
+                        link.target = '_blank';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }, index * 500); // Stagger downloads by 500ms
+                });
+
+                showAlert(`Downloading ${downloadUrls.length} document(s)...`, 'success');
+
+            } catch (error) {
+                console.error('Error downloading documents:', error);
+                showAlert('Error downloading documents. Please try again.', 'error');
+            }
+        }
+
+        async function viewRequestDetails(requestId) {
+            const request = allRequests.find(r => r.id === requestId);
+            if (!request) return;
+
+            // Helper function to create document display
+            function createDocumentDisplay(documents, type, title) {
+                console.log(`createDocumentDisplay called with type: ${type}, title: ${title}`);
+                console.log('Documents object:', documents);
+
+                if (!documents) {
+                    console.log('No documents object provided');
+                    return '';
+                }
+
+                if (type === 'idCard' && documents.idCard) {
+                    console.log('Displaying legacy idCard:', documents.idCard);
+                    return `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #0351a5; margin-bottom: 10px;">${title}</h5>
+                            <div style="border: 1px solid #ddd; border-radius: 6px; padding: 10px; background-color: white;">
+                                <img src="${documents.idCard.url}" alt="ID Card" style="max-width: 200px; max-height: 150px; border-radius: 4px; cursor: pointer;" onclick="window.open('${documents.idCard.url}', '_blank')" onerror="console.error('Failed to load image:', this.src)">
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${documents.idCard.name} (${formatFileSize(documents.idCard.size)})</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (type === 'idCards' && (documents.idCardFront || documents.idCardBack)) {
+                    console.log('Displaying idCards - Front:', documents.idCardFront, 'Back:', documents.idCardBack);
+                    let idCardsHtml = '';
+                    if (documents.idCardFront) {
+                        console.log('Adding front ID card image:', documents.idCardFront.url);
+                        idCardsHtml += `
+                            <div style="margin-bottom: 10px;">
+                                <h6 style="color: #666; margin-bottom: 5px;">Front Side</h6>
+                                <img src="${documents.idCardFront.url}" alt="ID Card Front" style="max-width: 200px; max-height: 150px; border-radius: 4px; cursor: pointer;" onclick="window.open('${documents.idCardFront.url}', '_blank')" onerror="console.error('Failed to load front ID image:', this.src)">
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${documents.idCardFront.name}</p>
+                            </div>
+                        `;
+                    }
+                    if (documents.idCardBack) {
+                        console.log('Adding back ID card image:', documents.idCardBack.url);
+                        idCardsHtml += `
+                            <div style="margin-bottom: 10px;">
+                                <h6 style="color: #666; margin-bottom: 5px;">Back Side</h6>
+                                <img src="${documents.idCardBack.url}" alt="ID Card Back" style="max-width: 200px; max-height: 150px; border-radius: 4px; cursor: pointer;" onclick="window.open('${documents.idCardBack.url}', '_blank')" onerror="console.error('Failed to load back ID image:', this.src)">
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${documents.idCardBack.name}</p>
+                            </div>
+                        `;
+                    }
+                    return `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #0351a5; margin-bottom: 10px;">${title}</h5>
+                            <div style="border: 1px solid #ddd; border-radius: 6px; padding: 10px; background-color: white;">
+                                ${idCardsHtml}
+                            </div>
+                        </div>
+                    `;
+                } else if (documents[type] && documents[type].length > 0) {
+                    const fileList = documents[type].map(file => `
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; background-color: white;">
+                            <img src="${file.url}" alt="${file.name}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 3px; cursor: pointer;" onclick="window.open('${file.url}', '_blank')">
+                            <div>
+                                <div style="font-size: 14px; font-weight: 500;">${file.name}</div>
+                                <div style="font-size: 12px; color: #666;">${formatFileSize(file.size)}</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div style="margin-bottom: 15px;">
+                            <h5 style="color: #0351a5; margin-bottom: 10px;">${title} (${documents[type].length})</h5>
+                            <div style="border: 1px solid #ddd; border-radius: 6px; padding: 10px; background-color: #f8f9fa;">
+                                ${fileList}
+                            </div>
+                        </div>
+                    `;
+                }
+                return '';
+            }
+
+            const detailsHtml = `
+                <div style="max-height: 70vh; overflow-y: auto;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
+                        <div>
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">PPP Loan Information</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                                <p style="margin: 8px 0;"><strong>PPP Loan Number:</strong> ${request.pppLoanNumber || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Loan Amount:</strong> ${request.loanAmount || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Tax ID:</strong> ${request.taxId || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Lender Name:</strong> ${request.lenderName || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Loan Date:</strong> ${request.loanDate || 'N/A'}</p>
+                            </div>
+
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">Business Information</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                                <p style="margin: 8px 0;"><strong>Business Name:</strong> ${request.businessName || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>DBA Name:</strong> ${request.dbaName || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Business Type:</strong> ${request.businessType || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Employee Count:</strong> ${request.employeeCount || 'N/A'}</p>
+                            </div>
+
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">Personal Information</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                                ${request.personalInfo ? `
+                                    <p style="margin: 8px 0;"><strong>Full Name:</strong> ${request.personalInfo.fullName || 'N/A'}</p>
+                                    <p style="margin: 8px 0;"><strong>Social Security Number:</strong> ${request.personalInfo.ssn || 'N/A'}</p>
+                                    <p style="margin: 8px 0;"><strong>Date of Birth:</strong> ${request.personalInfo.dateOfBirth || 'N/A'}</p>
+                                    <p style="margin: 8px 0;"><strong>Email Address:</strong> ${request.personalInfo.email || 'N/A'}</p>
+                                    ${request.personalInfo.address ? `
+                                        <p style="margin: 8px 0;"><strong>Personal Address:</strong>
+                                            ${request.personalInfo.address.street || ''},
+                                            ${request.personalInfo.address.city || ''},
+                                            ${request.personalInfo.address.state || ''}
+                                            ${request.personalInfo.address.zipCode || ''}
+                                        </p>
+                                    ` : '<p style="margin: 8px 0;"><strong>Personal Address:</strong> N/A</p>'}
+                                    ${request.personalInfo.signature ? `
+                                        <div style="margin: 8px 0;">
+                                            <strong>Digital Signature:</strong><br>
+                                            <img src="${request.personalInfo.signature}" alt="Digital Signature"
+                                                 style="max-width: 200px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px; background: white; padding: 5px;">
+                                        </div>
+                                    ` : '<p style="margin: 8px 0;"><strong>Digital Signature:</strong> N/A</p>'}
+                                ` : '<p style="margin: 0; color: #666; font-style: italic;">No personal information provided</p>'}
+                            </div>
+
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">Business Address</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                                <p style="margin: 8px 0;"><strong>Street Address:</strong> ${request.businessAddress || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>City:</strong> ${request.businessCity || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>State:</strong> ${request.businessState || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>ZIP Code:</strong> ${request.businessZip || 'N/A'}</p>
+                            </div>
+
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">Contact Information</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px;">
+                                <p style="margin: 8px 0;"><strong>Email:</strong> ${request.contactEmail || 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Phone:</strong> ${request.contactPhone || 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">Request Status</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                                <p style="margin: 8px 0;"><strong>Status:</strong> <span class="status-badge status-${request.requestStatus || 'draft'}" style="margin-left: 10px;">${(request.requestStatus || 'draft').toUpperCase()}</span></p>
+                                <p style="margin: 8px 0;"><strong>Created:</strong> ${request.createdAt ? firebaseHelpers.formatDate(request.createdAt) : 'N/A'}</p>
+                                <p style="margin: 8px 0;"><strong>Submitted:</strong> ${request.submittedAt ? firebaseHelpers.formatDate(request.submittedAt) : 'Not submitted'}</p>
+                            </div>
+
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">Uploaded Documents</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                                ${request.documents ? (() => {
+                                    console.log('Request documents found:', request.documents);
+                                    console.log('Document keys:', Object.keys(request.documents));
+                                    return `
+                                        ${createDocumentDisplay(request.documents, 'idCard', 'Government ID Card (Legacy)')}
+                                        ${createDocumentDisplay(request.documents, 'idCards', 'Government ID Card')}
+                                        ${createDocumentDisplay(request.documents, 'bankStatements', 'Bank Statements')}
+                                        ${createDocumentDisplay(request.documents, 'payroll', 'Payroll Records')}
+                                        ${createDocumentDisplay(request.documents, 'additionalDocs', 'Additional Documents')}
+                                    `;
+                                })() : (() => {
+                                    console.log('No documents found for request:', request.id);
+                                    return '<p style="margin: 0; color: #666; font-style: italic;">No documents uploaded</p>';
+                                })()}
+                            </div>
+
+                            <h4 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 5px; margin-bottom: 15px;">User Account</h4>
+                            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px;">
+                                <p style="margin: 8px 0;"><strong>User ID:</strong> <span style="font-family: monospace; font-size: 12px; color: #6c757d;">${request.userId || 'N/A'}</span></p>
+                                ${request.user_profiles ? `
+                                    <p style="margin: 8px 0;"><strong>Account Email:</strong> ${request.user_profiles.email || 'N/A'}</p>
+                                    <p style="margin: 8px 0;"><strong>Account Name:</strong> ${(request.user_profiles.firstName || '') + ' ' + (request.user_profiles.lastName || '') || 'N/A'}</p>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 15px; background-color: #e7f3ff; border-left: 4px solid #007bff; border-radius: 4px;">
+                        <h5 style="margin: 0 0 10px 0; color: #004085;">Admin Notes</h5>
+                        <p style="margin: 0 0 10px 0; font-size: 14px; color: #004085;">
+                            This PPP loan forgiveness request includes all submitted information and uploaded documents from Cloudinary.
+                            Click on any document image to view it in full size.
+                        </p>
+                        ${request.requestStatus === 'submitted' ? `
+                            <p style="margin: 0; font-size: 14px; color: #004085;">
+                                <strong>Status:</strong> This application has been submitted with ${request.documents ? Object.keys(request.documents).filter(key => request.documents[key]).length : 0} document categories uploaded.
+                            </p>
+                        ` : `
+                            <p style="margin: 0; font-size: 14px; color: #856404; background-color: #fff3cd; padding: 8px; border-radius: 4px;">
+                                <strong>Draft Status:</strong> This application is still in draft mode and has not been submitted yet.
+                            </p>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('requestDetails').innerHTML = detailsHtml;
+            document.getElementById('requestModal').style.display = 'block';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function closeRequestModal() {
+            document.getElementById('requestModal').style.display = 'none';
+        }
+
+        // Analytics
+        async function loadAnalytics() {
+            try {
+                // Load loan statistics from Firebase
+                const { data: loanStats, error: loanError } = await firebaseHelpers.getLoans();
+
+                if (loanError) throw loanError;
+
+                const totalLoans = loanStats ? loanStats.length : 0;
+                const totalAmount = loanStats ? loanStats.reduce((sum, loan) => sum + (loan.loanAmount || 0), 0) : 0;
+
+                // Load request statistics from Firebase
+                const { data: requestStats, error: requestError } = await firebaseHelpers.getAllForgivenessRequests();
+
+                if (requestError) throw requestError;
+
+                const totalRequests = requestStats ? requestStats.length : 0;
+
+                // Update analytics display
+                document.getElementById('totalLoans').textContent = totalLoans.toLocaleString();
+                document.getElementById('totalAmount').textContent = formatCurrency(totalAmount);
+                document.getElementById('totalRequests').textContent = totalRequests.toLocaleString();
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                // Set default values on error
+                document.getElementById('totalLoans').textContent = '0';
+                document.getElementById('totalAmount').textContent = '$0.00';
+                document.getElementById('totalRequests').textContent = '0';
+            }
+        }
+
+        // Utility Functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+
+                // Find the button that was clicked and show success feedback
+                const buttons = document.querySelectorAll('.copy-btn');
+                buttons.forEach(btn => {
+                    if (btn.getAttribute('onclick').includes(text)) {
+                        const originalText = btn.innerHTML;
+                        btn.classList.add('copied');
+                        btn.innerHTML = 'Copied!';
+
+                        setTimeout(() => {
+                            btn.classList.remove('copied');
+                            btn.innerHTML = originalText;
+                        }, 1500);
+                    }
+                });
+
+                showAlert(`Loan number "${text}" copied to clipboard!`, 'success');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    showAlert(`Loan number "${text}" copied to clipboard!`, 'success');
+                } catch (fallbackErr) {
+                    showAlert('Failed to copy to clipboard. Please copy manually.', 'error');
+                }
+
+                document.body.removeChild(textArea);
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = message;
+
+            // Clear previous alerts
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+
+            // Scroll to alert
+            alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Auto-hide success alerts after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+        }
+
+        function redirectToLogin() {
+            alert('Please sign in to access the admin dashboard.');
+            window.location.href = 'index-new.html';
+        }
+
+        async function handleSignOut() {
+            try {
+                const { error } = await firebaseHelpers.signOut();
+                if (error) {
+                    console.error('Sign out error:', error);
+                    alert('Error signing out. Please try again.');
+                    return;
+                }
+
+                // Clear session storage
+                sessionStorage.clear();
+
+                // Redirect to login
+                window.location.href = 'index-new.html';
+
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Error signing out. Please try again.');
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const loanModal = document.getElementById('loanModal');
+            const requestModal = document.getElementById('requestModal');
+
+            if (event.target === loanModal) {
+                closeLoanModal();
+            }
+            if (event.target === requestModal) {
+                closeRequestModal();
+            }
+        }
+
+        // Make functions globally available for onclick handlers
+        window.openCreateLoanModal = openCreateLoanModal;
+        window.closeLoanModal = closeLoanModal;
+        window.editLoan = editLoan;
+        window.deleteLoan = deleteLoan;
+        window.showSection = showSection;
+        window.handleSignOut = handleSignOut;
+        window.closeRequestModal = closeRequestModal;
+        window.viewRequestDetails = viewRequestDetails;
+        window.refreshLoans = refreshLoans;
+        window.refreshRequests = refreshRequests;
+        window.loadAnalytics = loadAnalytics;
+        window.copyToClipboard = copyToClipboard;
+
+        // Firebase auth state is already handled in the DOMContentLoaded listener
+    </script>
+</body>
+</html>
